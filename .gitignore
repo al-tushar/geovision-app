@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Secrets - never commit these
+.env
+.env.*
+*.pem
+
+# Large files (keep out of Git)
+data/raw/
+data/processed/
+checkpoints/
+*.zip
+*.pt
+*.ckpt
+# small model files in models/ are allowed
+*.pth
+!models/*.pth
+
+# Notebook cache
+.ipynb_checkpoints/
+
+# Editor / OS files
+.vscode/
+.DS_Store
+Thumbs.db
+node_modules/

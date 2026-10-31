@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeoVision — Satellite AI for Post-Disaster Building Assessment</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- Sticky Top Navigation -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="#top" class="brand-link">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3.6 9h16.8"></path>
+            <path d="M3.6 15h16.8"></path>
+            <path d="M12 3a15 15 0 0 1 0 18"></path>
+            <path d="M12 3a15 15 0 0 0 0 18"></path>
+          </svg>
+        </span>
+        <span>GeoVision</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="#analyzer">AI Analyzer</a>
+        <a href="#insights">Disaster Insights</a>
+        <a href="#dataset">Dataset Browser</a>
+        <a href="#research">Research &amp; Downloads</a>
+        <a href="#community">Community</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div id="cloudStatusPill" class="cloud-pill" title="Connected live to Supabase Postgres, Storage, Auth &amp; Edge Functions">
+          <span class="live-dot"></span>
+          <span id="cloudStatusText">Supabase Live</span>
+        </div>
+
+        <button id="themeToggleBtn" class="icon-btn" type="button" title="Switch Light / Dark Theme" aria-label="Toggle color theme">
+          <svg id="themeIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <button id="authNavBtn" class="btn btn-secondary btn-sm" type="button">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main id="top">
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              Earth Observation AI · Powered by Supabase Cloud
+            </div>
+            <h1>Assess Post-Disaster Building Damage from Space.</h1>
+            <p class="hero-lead">
+              GeoVision analyzes high-resolution satellite building footprints across hurricanes, wildfires, earthquakes, and tsunamis—helping researchers classify structural impact in seconds.
+            </p>
+
+            <div class="hero-cta-row">
+              <a href="#analyzer" class="btn btn-primary">
+                Try Live AI Analyzer →
+              </a>
+              <a href="#dataset" class="btn btn-secondary">
+                Browse 7,963 Buildings
+              </a>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat-tile">
+                <div id="statTotalCrops" class="stat-num">7,963</div>
+                <div class="stat-label">Building Crops</div>
+              </div>
+              <div class="stat-tile">
+                <div id="statDisasters" class="stat-num">10</div>
+                <div class="stat-label">Disaster Events</div>
+              </div>
+              <div class="stat-tile">
+                <div id="statScenes" class="stat-num">1,239</div>
+                <div class="stat-label">Satellite Scenes</div>
+              </div>
+              <div class="stat-tile">
+                <div id="statAssessments" class="stat-num">—</div>
+                <div class="stat-label">Cloud AI Scans</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Before/After Satellite Polygon Slider -->
+          <div class="sat-showcase">
+            <div class="sat-viewport">
+              <img src="./assets/hero-satellite.jpg" alt="Overhead coastal residential satellite view" />
+
+              <!-- GeoVision AI Overlay Layer -->
+              <div id="satOverlayLayer" class="sat-overlay-layer">
+                <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+                  <rect width="800" height="600" fill="rgba(15, 23, 42, 0.18)" />
+                  <!-- Intact inland blocks -->
+                  <rect x="218" y="62" width="32" height="28" rx="3" fill="rgba(16,185,129,0.28)" stroke="#10b981" stroke-width="2.5" />
+                  <rect x="262" y="62" width="32" height="28" rx="3" fill="rgba(16,185,129,0.28)" stroke="#10b981" stroke-width="2.5" />
+                  <rect x="308" y="62" width="30" height="28" rx="3" fill="rgba(16,185,129,0.28)" stroke="#10b981" stroke-width="2.5" />
+                  <rect x="352" y="62" width="32" height="28" rx="3" fill="rgba(245,158,11,0.32)" stroke="#f59e0b" stroke-width="2.5" />
+
+                  <rect x="218" y="146" width="34" height="32" rx="3" fill="rgba(16,185,129,0.28)" stroke="#10b981" stroke-width="2.5" />
+                  <rect x="266" y="146" width="32" height="32" rx="3" fill="rgba(245,158,11,0.32)" stroke="#f59e0b" stroke-width="2.5" />
+                  <rect x="310" y="146" width="34" height="32" rx="3" fill="rgba(16,185,129,0.28)" stroke="#10b981" stroke-width="2.5" />
+                  <rect x="356" y="148" width="30" height="30" rx="3" fill="rgba(249,115,22,0.34)" stroke="#f97316" stroke-width="2.5" />
+
+                  <rect x="220" y="232" width="34" height="30" rx="3" fill="rgba(16,185,129,0.28)" stroke="#10b981" stroke-width="2.5" />
+                  <rect x="268" y="232" width="32" height="30" rx="3" fill="rgba(245,158,11,0.32)" stroke="#f59e0b" stroke-width="2.5" />
+                  <rect x="314" y="232" width="32" height="30" rx="3" fill="rgba(249,115,22,0.35)" stroke="#f97316" stroke-width="2.5" />
+                  <rect x="358" y="232" width="30" height="30" rx="3" fill="rgba(249,115,22,0.35)" stroke="#f97316" stroke-width="2.5" />
+
+                  <rect x="218" y="320" width="34" height="32" rx="3" fill="rgba(16,185,129,0.28)" stroke="#10b981" stroke-width="2.5" />
+                  <rect x="268" y="320" width="32" height="32" rx="3" fill="rgba(245,158,11,0.32)" stroke="#f59e0b" stroke-width="2.5" />
+                  <rect x="314" y="320" width="32" height="32" rx="3" fill="rgba(249,115,22,0.35)" stroke="#f97316" stroke-width="2.5" />
+                  <rect x="358" y="320" width="30" height="32" rx="3" fill="rgba(239,68,68,0.38)" stroke="#ef4444" stroke-width="2.5" />
+
+                  <!-- Exposed beachfront impact zone -->
+                  <rect x="420" y="150" width="34" height="30" rx="3" fill="rgba(249,115,22,0.36)" stroke="#f97316" stroke-width="2.5" />
+                  <rect x="422" y="204" width="34" height="30" rx="3" fill="rgba(239,68,68,0.4)" stroke="#ef4444" stroke-width="2.5" />
+                  <rect x="422" y="254" width="36" height="32" rx="3" fill="rgba(239,68,68,0.4)" stroke="#ef4444" stroke-width="2.5" />
+                  <rect x="418" y="322" width="34" height="30" rx="3" fill="rgba(249,115,22,0.36)" stroke="#f97316" stroke-width="2.5" />
+                  <rect x="466" y="322" width="32" height="30" rx="3" fill="rgba(239,68,68,0.4)" stroke="#ef4444" stroke-width="2.5" />
+                  <rect x="492" y="132" width="32" height="28" rx="3" fill="rgba(239,68,68,0.42)" stroke="#ef4444" stroke-width="2.5" />
+                  <rect x="506" y="188" width="32" height="28" rx="3" fill="rgba(239,68,68,0.42)" stroke="#ef4444" stroke-width="2.5" />
+                  <rect x="520" y="242" width="32" height="28" rx="3" fill="rgba(239,68,68,0.42)" stroke="#ef4444" stroke-width="2.5" />
+                  <rect x="536" y="346" width="34" height="30" rx="3" fill="rgba(239,68,68,0.42)" stroke="#ef4444" stroke-width="2.5" />
+                </svg>
+              </div>
+
+              <span class="sat-corner-tag left">Raw Satellite Pass</span>
+              <span class="sat-corner-tag right">GeoVision Footprint Map</span>
+
+              <div id="satDivider" class="sat-divider">
+                <div class="sat-handle">↔</div>
+              </div>
+
+              <input id="satSlider" class="sat-range" type="range" min="8" max="92" value="42" aria-label="Drag to compare raw satellite view and building footprint damage map" />
+            </div>
+
+            <div class="sat-legend">
+              <span>Drag slider to inspect footprints</span>
+              <div class="legend-dots">
+                <span><i class="dot" style="background:#10b981;"></i>No Damage</span>
+                <span><i class="dot" style="background:#f59e0b;"></i>Minor</span>
+                <span><i class="dot" style="background:#f97316;"></i>Major</span>
+                <span><i class="dot" style="background:#ef4444;"></i>Destroyed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3-Step Visual Story -->
+    <section class="steps-strip">
+      <div class="container">
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-badge">1</div>
+            <h3>Isolate Building Footprints</h3>
+            <p>Each building polygon in post-disaster satellite imagery is cropped with surrounding context and standardized to a crisp 128×128 RGB view.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-badge">2</div>
+            <h3>Classify with Cloud Edge AI</h3>
+            <p>GeoVision’s PyTorch neural network runs serverless on Supabase Edge Functions, evaluating structural condition in milliseconds—right from your browser.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-badge">3</div>
+            <h3>Explore Leak-Free Data</h3>
+            <p>All 7,963 building crops across 10 disasters are indexed in Supabase Postgres with strict scene-level separation so training and validation never overlap.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: LIVE AI BUILDING ANALYZER -->
+    <section id="analyzer" class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Try the Live AI Building Analyzer</h2>
+            <p>Click any sample satellite building below for an instant assessment, or upload your own overhead image to run it live on Supabase Cloud.</p>
+          </div>
+        </div>
+
+        <div class="analyzer-grid">
+          <!-- Step 1: Select or Upload -->
+          <div class="panel-card">
+            <div class="step-label">Step 1 · Select or Upload</div>
+            <h3 style="font-size: 1.2rem;">Choose a Satellite Building View</h3>
+
+            <div id="sampleCards" class="sample-cards"></div>
+
+            <label id="dropzone" class="dropzone">
+              <div>
+                <strong style="display:block; font-size:0.9rem; color:var(--text-main);">Upload your own satellite or aerial building photo</strong>
+                <span style="font-size:0.8rem; color:var(--text-muted);">Drag &amp; drop a PNG, JPG, or WebP file—or click to browse</span>
+              </div>
+              <span class="btn btn-secondary btn-sm">Browse File</span>
+              <input id="fileInput" type="file" accept="image/*" />
+            </label>
+
+            <div class="preview-strip">
+              <canvas id="previewCanvas" width="128" height="128"></canvas>
+              <div style="flex:1; min-width:0;">
+                <div style="font-weight:700; color:var(--text-main); font-size:0.92rem;" id="activeCropTitle">Suburban Residence — Clear Roofline</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;" id="activeCropMeta">Resampled cleanly to 128×128 RGB for CNN evaluation</div>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="field">
+                <label for="sampleTitleInput">Building / Location Title</label>
+                <input id="sampleTitleInput" class="input" type="text" value="Suburban Residence — Clear Roofline" />
+              </div>
+              <div class="field">
+                <label for="modelChoice">AI Model Checkpoint</label>
+                <select id="modelChoice" class="select">
+                  <option value="geovision_pilot_cnn_balanced">Balanced CNN (Recommended)</option>
+                  <option value="geovision_pilot_cnn">Baseline CNN (Standard Loss)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field" style="margin-bottom: 16px;">
+              <label for="sampleNotesInput">Optional Field Note</label>
+              <input id="sampleNotesInput" class="input" type="text" placeholder="Add region, disaster name, or observation notes..." />
+            </div>
+
+            <button id="saveAnalyzeBtn" class="btn btn-primary" style="width:100%;" type="button">
+              Analyze Building &amp; Save to Cloud
+            </button>
+          </div>
+
+          <!-- Step 2: AI Verdict & Confidence Breakdown -->
+          <div class="panel-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div class="step-label">Step 2 · Instant Cloud Report</div>
+                <h3 style="font-size: 1.2rem;">AI Damage Assessment</h3>
+              </div>
+              <span id="speedPill" class="eyebrow" style="margin:0;">Ready</span>
+            </div>
+
+            <div class="verdict-banner">
+              <div class="verdict-top">
+                <div>
+                  <div id="verdictPillWrap"><span class="sev-pill sev-no-damage">Ready</span></div>
+                  <div id="verdictHeadline" class="verdict-title">Select a sample to analyze</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">Top Confidence</div>
+                  <div id="verdictConfidence" style="font-size:1.45rem; font-weight:800; color:var(--text-main);">—</div>
+                </div>
+              </div>
+              <p id="verdictExplanation" class="verdict-desc">
+                GeoVision evaluates roofline continuity, surrounding debris, and surface texture across four standardized xView2 damage levels.
+              </p>
+            </div>
+
+            <div style="font-size:0.84rem; font-weight:700; color:var(--text-main); margin-bottom:10px;">
+              Confidence Across Damage Levels
+            </div>
+            <div id="confidenceBars" class="conf-bars"></div>
+
+            <div id="modelCompareNote" style="padding:12px 14px; border-radius:var(--radius-md); background:var(--bg-elevated); border:1px solid var(--border); font-size:0.83rem;"></div>
+
+            <details class="tech-drawer">
+              <summary>View Technical Details (64-Channel Neural Feature Map &amp; Raw Logits)</summary>
+              <div style="margin-top:10px; font-size:0.8rem; color:var(--text-muted);">
+                Pooled 64-dimensional feature vector from <code class="mono">AdaptiveAvgPool2d(1×1)</code> inside the Supabase Edge Function:
+              </div>
+              <div id="embeddingGrid" class="emb-grid"></div>
+              <pre id="rawLogitsBox" class="mono" style="margin:10px 0 0; font-size:0.75rem; color:var(--text-muted); overflow-x:auto;"></pre>
+            </details>
+          </div>
+        </div>
+
+        <!-- Saved Cloud Assessments Feed -->
+        <div style="margin-top: 34px;">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
+            <div>
+              <h3 style="font-size: 1.15rem;">Recent Cloud Assessments</h3>
+              <p style="font-size: 0.86rem; color: var(--text-muted);">Saved in real time to Supabase Postgres &amp; Cloud Storage.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button id="filterAllRunsBtn" class="filter-pill active" type="button">All Recent Scans</button>
+              <button id="filterMyRunsBtn" class="filter-pill" type="button">My Saved Scans</button>
+            </div>
+          </div>
+          <div id="recentGallery" class="gallery-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: DISASTER IMPACT INSIGHTS -->
+    <section id="insights" class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Global Disaster Impact Insights</h2>
+            <p>Explore how building damage severity varies across all 10 major natural disasters in the GeoVision cloud dataset. Click any disaster to inspect its building records.</p>
+          </div>
+        </div>
+
+        <div id="categoryFilterBar" class="pill-bar">
+          <button class="filter-pill active" data-cat="all" type="button">All 10 Disasters</button>
+          <button class="filter-pill" data-cat="hurricane" type="button">Hurricanes (4)</button>
+          <button class="filter-pill" data-cat="wildfire" type="button">Wildfires (2)</button>
+          <button class="filter-pill" data-cat="tsunami" type="button">Tsunami</button>
+          <button class="filter-pill" data-cat="earthquake" type="button">Earthquake</button>
+          <button class="filter-pill" data-cat="flooding" type="button">Flooding</button>
+          <button class="filter-pill" data-cat="volcano" type="button">Volcano</button>
+        </div>
+
+        <div id="disasterGrid" class="disaster-grid"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: USER-FRIENDLY DATASET BROWSER -->
+    <section id="dataset" class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Interactive Building Dataset Browser</h2>
+            <p>Search and filter all 7,963 standardized post-disaster building records hosted live in Supabase. Click any row for full footprint details.</p>
+          </div>
+          <button id="exportCsvBtn" class="btn btn-secondary btn-sm" type="button">
+            Download Filtered CSV ↓
+          </button>
+        </div>
+
+        <div class="explorer-controls">
+          <div class="field">
+            <label for="searchInput">Search Scene or Building ID</label>
+            <input id="searchInput" class="input" type="search" placeholder="Search e.g. Harvey, Palu, or building ID..." />
+          </div>
+          <div class="field">
+            <label for="disasterSelect">Disaster Event</label>
+            <select id="disasterSelect" class="select">
+              <option value="all">All 10 Disasters</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="damageSelect">Damage Severity</label>
+            <select id="damageSelect" class="select">
+              <option value="all">All Severity Levels</option>
+              <option value="no-damage">No Damage</option>
+              <option value="minor-damage">Minor Damage</option>
+              <option value="major-damage">Major Damage</option>
+              <option value="destroyed">Destroyed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="splitSelect">Dataset Split</label>
+            <select id="splitSelect" class="select">
+              <option value="all">All Records (7,963)</option>
+              <option value="train">Training Set (6,288)</option>
+              <option value="val">Validation Set (1,675)</option>
+            </select>
+          </div>
+          <button id="clearFiltersBtn" class="btn btn-secondary" type="button">Reset</button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Disaster Event</th>
+                  <th>Damage Severity</th>
+                  <th>Dataset Split</th>
+                  <th>Original Footprint</th>
+                  <th>Satellite Scene File</th>
+                  <th>Building ID</th>
+                </tr>
+              </thead>
+              <tbody id="datasetBody">
+                <tr>
+                  <td colspan="6" style="text-align:center; padding:32px; color:var(--text-muted);">Loading live records from Supabase...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span id="paginationInfo">Loading...</span>
+            <div style="display:flex; gap:8px;">
+              <button id="prevBtn" class="btn btn-secondary btn-sm" type="button">← Previous</button>
+              <button id="nextBtn" class="btn btn-secondary btn-sm" type="button">Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: RESEARCH BENCHMARKS & OPEN DOWNLOADS -->
+    <section id="research" class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Research Methodology &amp; Open Downloads</h2>
+            <p>Built from the xView2 Challenge dataset with strict scene-level separation, balanced sampling experiments, and downloadable checkpoints hosted on Supabase Storage.</p>
+          </div>
+        </div>
+
+        <div class="research-grid">
+          <div class="panel-card">
+            <div class="step-label">Data Engineering Funnel</div>
+            <h3 style="font-size:1.18rem; margin-bottom:14px;">Zero-Leakage Satellite Pipeline</h3>
+            <div id="funnelContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
+          </div>
+
+          <div class="panel-card">
+            <div class="step-label">Pilot Model Experiments</div>
+            <h3 style="font-size:1.18rem; margin-bottom:14px;">Why Balanced Sampling Matters</h3>
+            <div id="benchmarkContainer" style="display:flex; flex-direction:column; gap:14px;"></div>
+
+            <h4 style="font-size:0.95rem; margin-top:20px;">Direct Cloud Downloads (Supabase Storage)</h4>
+            <div id="downloadsGrid" class="download-list"></div>
+          </div>
+        </div>
+
+        <div class="disclaimer-box">
+          <strong>Academic Research Scope:</strong> GeoVision is an active student software engineering and computer vision research project exploring building-crop classification on the xView2 dataset. Current pilot checkpoints (<code class="mono">25,796</code> parameters) serve as experimental baselines and should not be used for operational emergency dispatch without human verification.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: COMMUNITY FEEDBACK & RESEARCH NOTES -->
+    <section id="community" class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Community Notes &amp; Project Feedback</h2>
+            <p>Share feedback, suggest model architectures, or leave a note for the GeoVision team—saved directly to Supabase.</p>
+          </div>
+        </div>
+
+        <div class="feedback-layout">
+          <form id="feedbackForm" class="panel-card">
+            <h3 style="font-size:1.12rem; margin-bottom:14px;">Leave a Note</h3>
+            <div class="form-row-2">
+              <div class="field">
+                <label for="fbName">Your Name</label>
+                <input id="fbName" class="input" type="text" placeholder="e.g. Dr. Patel or Sam" required maxlength="80" />
+              </div>
+              <div class="field">
+                <label for="fbCategory">Topic</label>
+                <select id="fbCategory" class="select">
+                  <option value="General">General Feedback</option>
+                  <option value="Model & AI">Model &amp; AI Ideas</option>
+                  <option value="Dataset">Dataset &amp; xView2</option>
+                  <option value="UI & UX">Website Experience</option>
+                  <option value="Collaboration">Collaboration</option>
+                </select>
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:14px;">
+              <label for="fbRole">Role / Affiliation (Optional)</label>
+              <input id="fbRole" class="input" type="text" placeholder="e.g. CS Student, Researcher, Visitor" maxlength="60" />
+            </div>
+            <div class="field" style="margin-bottom:16px;">
+              <label for="fbMessage">Message</label>
+              <textarea id="fbMessage" class="textarea" rows="3" placeholder="Share your thoughts on GeoVision..." required minlength="3" maxlength="600"></textarea>
+            </div>
+            <button id="fbSubmitBtn" class="btn btn-primary" style="width:100%;" type="submit">
+              Post Note to Supabase
+            </button>
+          </form>
+
+          <div id="feedbackList" class="feedback-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">
+      <div>
+        <strong style="color:var(--text-main);">GeoVision</strong> · Post-Disaster Satellite Building Damage Assessment
+        <div style="font-size:0.8rem; margin-top:4px;">Connected live to Supabase Cloud (<code class="mono">yyulucwyzlaczlchulbp</code>) · Dataset derived from xView2</div>
+      </div>
+      <div style="display:flex; gap:16px;">
+        <a href="https://github.com/al-tushar/geovision-app" target="_blank" rel="noopener noreferrer" style="color:var(--text-muted); text-decoration:none;">GitHub Repository ↗</a>
+        <a href="https://supabase.com/dashboard/project/yyulucwyzlaczlchulbp" target="_blank" rel="noopener noreferrer" style="color:var(--text-muted); text-decoration:none;">Supabase Dashboard ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Supabase Auth Modal (Optional Researcher Sign In / Sign Up) -->
+  <div id="authModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 id="authModalTitle" style="font-size:1.2rem;">Researcher Account</h3>
+        <button id="closeAuthModalBtn" class="icon-btn" type="button" aria-label="Close modal">✕</button>
+      </div>
+      <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:16px;">
+        Sign in or create an instant Supabase account to tag building scans with your name and manage your personal saved assessments.
+      </p>
+
+      <div id="authTabs" class="pill-bar" style="margin-bottom:16px;">
+        <button id="modeSignInBtn" class="filter-pill active" type="button">Sign In</button>
+        <button id="modeSignUpBtn" class="filter-pill" type="button">Create Account</button>
+      </div>
+
+      <form id="authForm">
+        <div id="authNameWrap" class="field" style="margin-bottom:12px; display:none;">
+          <label for="authFullName">Display Name</label>
+          <input id="authFullName" class="input" type="text" placeholder="e.g. Abdullah Tushar" />
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label for="authEmail">Email Address</label>
+          <input id="authEmail" class="input" type="email" placeholder="you@university.edu" required />
+        </div>
+        <div class="field" style="margin-bottom:16px;">
+          <label for="authPassword">Password (min 6 characters)</label>
+          <input id="authPassword" class="input" type="password" placeholder="••••••••" minlength="6" required />
+        </div>
+        <div id="authErrorMsg" style="color:var(--dest-fg); font-size:0.82rem; margin-bottom:10px; display:none;"></div>
+        <button id="authSubmitBtn" class="btn btn-primary" style="width:100%;" type="submit">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Building Record Detail Modal -->
+  <div id="recordModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:1.15rem;">Building Footprint Record</h3>
+        <button id="closeRecordModalBtn" class="icon-btn" type="button" aria-label="Close">✕</button>
+      </div>
+      <div id="recordModalContent"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
